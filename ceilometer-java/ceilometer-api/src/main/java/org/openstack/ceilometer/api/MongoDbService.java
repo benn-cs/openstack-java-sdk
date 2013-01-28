@@ -73,7 +73,7 @@ public class MongoDbService {
 			mongo = new Mongo(host, port);
 			db = mongo.getDB(dbname);
 			if(username != null && password != null && !db.authenticate(username, password.toCharArray())) {
-				new RuntimeException("auth"); 
+				throw new RuntimeException("auth"); 
 			}
 		} catch (Exception e) {
 			throw new RuntimeException();

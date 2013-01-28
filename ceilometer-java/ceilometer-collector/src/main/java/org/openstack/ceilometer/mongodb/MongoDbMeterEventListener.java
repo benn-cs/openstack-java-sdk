@@ -55,7 +55,7 @@ public class MongoDbMeterEventListener implements MeterEventListener {
 			mongo = new Mongo(host, port);
 			db = mongo.getDB(dbname);
 			if(username != null && password != null && !db.authenticate(username, password.toCharArray())) {
-				new RuntimeException("auth"); 
+				throw new RuntimeException("auth"); 
 			}
 			
 			// # We need variations for user_id vs. project_id because of the
