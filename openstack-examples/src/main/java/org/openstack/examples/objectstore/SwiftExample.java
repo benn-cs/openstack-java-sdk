@@ -1,9 +1,15 @@
 package org.openstack.examples.objectstore;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 
+import org.openstack.examples.ExamplesConfiguration;
 import org.openstack.keystone.KeystoneClient;
 import org.openstack.keystone.api.Authenticate;
 import org.openstack.keystone.api.ListTenants;
@@ -12,28 +18,24 @@ import org.openstack.keystone.model.Tenants;
 import org.openstack.keystone.utils.KeystoneUtils;
 import org.openstack.swift.SwiftClient;
 import org.openstack.swift.api.CreateContainer;
+import org.openstack.swift.api.DownloadObject;
 import org.openstack.swift.api.ListContainers;
 import org.openstack.swift.api.ListObjects;
 import org.openstack.swift.api.UploadObject;
+import org.openstack.swift.model.ObjectDownload;
 import org.openstack.swift.model.ObjectForUpload;
 
 public class SwiftExample {
 	
 	private static final File TEST_FILE = new File("pom.xml");
 	
-	private static final String KEYSTONE_AUTH_URL = "https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0";
-	
-	private static final String KEYSTONE_USERNAME = "";
-	
-	private static final String KEYSTONE_PASSWORD = "";
-
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		KeystoneClient keystone = new KeystoneClient(KEYSTONE_AUTH_URL);		
+		KeystoneClient keystone = new KeystoneClient(ExamplesConfiguration.KEYSTONE_AUTH_URL);		
 		//access with unscoped token
-		Access access = keystone.execute(Authenticate.withPasswordCredentials(KEYSTONE_USERNAME, KEYSTONE_PASSWORD));
+		Access access = keystone.execute(Authenticate.withPasswordCredentials(ExamplesConfiguration.KEYSTONE_USERNAME, ExamplesConfiguration.KEYSTONE_PASSWORD));
 		
 		//use the token in the following requests
 		keystone.setToken(access.getToken().getId());
@@ -63,8 +65,27 @@ public class SwiftExample {
 				put("path", "");
 			}})).get(0).getContentType());
 			
+			
+			ObjectDownload download = swiftClient.execute(new DownloadObject("navidad2", "example2"));
+			write(download.getInputStream(), "example2");
 		}
 
+	}
+	
+	private static void write(InputStream is, String path) {
+		try {
+			OutputStream stream = new BufferedOutputStream(new FileOutputStream(path)); 
+			int bufferSize = 1024;
+			byte[] buffer = new byte[bufferSize];
+			int len = 0;
+			while ((len = is.read(buffer)) != -1) {
+			    stream.write(buffer, 0, len);
+			}
+			stream.close();   
+		} catch(IOException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		
 	}
 
 }

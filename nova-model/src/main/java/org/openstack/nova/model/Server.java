@@ -20,6 +20,9 @@ public class Server implements Serializable {
 			private String version;
 			
 			private String addr;
+			
+			@JsonProperty("OS-EXT-IPS:type")
+			private String type;
 
 			/**
 			 * @return the version
@@ -34,13 +37,34 @@ public class Server implements Serializable {
 			public String getAddr() {
 				return addr;
 			}
+			
 
-			/* (non-Javadoc)
-			 * @see java.lang.Object#toString()
+			/**
+			 * @return the type
 			 */
-			@Override
-			public String toString() {
-				return "Address [version=" + version + ", addr=" + addr + "]";
+			public String getType() {
+				return type;
+			}
+
+			/**
+			 * @param version the version to set
+			 */
+			public void setVersion(String version) {
+				this.version = version;
+			}
+
+			/**
+			 * @param addr the addr to set
+			 */
+			public void setAddr(String addr) {
+				this.addr = addr;
+			}
+
+			/**
+			 * @param type the type to set
+			 */
+			public void setType(String type) {
+				this.type = type;
 			}
 			
 		}
@@ -74,6 +98,8 @@ public class Server implements Serializable {
 		
 		private String message;
 		
+		private String details;
+		
 		private Calendar created;
 
 		/**
@@ -91,11 +117,28 @@ public class Server implements Serializable {
 		}
 
 		/**
+		 * @return the details
+		 */
+		public String getDetails() {
+			return details;
+		}
+
+		/**
 		 * @return the created
 		 */
 		public Calendar getCreated() {
 			return created;
 		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return "Fault [code=" + code + ", message=" + message
+					+ ", details=" + details + ", created=" + created + "]";
+		}
+		
 		
 	}
 		
@@ -165,6 +208,9 @@ public class Server implements Serializable {
 	
 	@JsonProperty("OS-DCF:diskConfig")
 	private String diskConfig;
+	
+	@JsonProperty("OS-EXT-AZ:availability_zone")
+	private String availabilityZone;
 	
 	private String uuid;
 	
@@ -374,6 +420,13 @@ public class Server implements Serializable {
 	}
 
 	/**
+	 * @return the availabilityZone
+	 */
+	public String getAvailabilityZone() {
+		return availabilityZone;
+	}
+
+	/**
 	 * @return the uuid
 	 */
 	public String getUuid() {
@@ -404,8 +457,9 @@ public class Server implements Serializable {
 				+ taskState + ", powerState=" + powerState + ", vmState="
 				+ vmState + ", host=" + host + ", instanceName=" + instanceName
 				+ ", hypervisorHostname=" + hypervisorHostname
-				+ ", diskConfig=" + diskConfig + ", uuid=" + uuid
-				+ ", adminPass=" + adminPass + "]";
+				+ ", diskConfig=" + diskConfig + ", availabilityZone="
+				+ availabilityZone + ", uuid=" + uuid + ", adminPass="
+				+ adminPass + "]";
 	}
 
 }
