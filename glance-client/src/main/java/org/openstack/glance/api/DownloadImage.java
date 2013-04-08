@@ -3,6 +3,7 @@ package org.openstack.glance.api;
 import java.io.InputStream;
 import java.util.Calendar;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -21,13 +22,13 @@ public class DownloadImage implements GlanceCommand<ImageDownload> {
 
 	@Override
 	public ImageDownload execute(WebTarget target) {
-		Response response = target.path("images").path(id).request(MediaType.APPLICATION_OCTET_STREAM).head();
+		Response response = target.path("images").path(id).request(MediaType.APPLICATION_OCTET_STREAM).get();
 		Image image = new Image();
 		image.setUri(response.getHeaderString("x-image-meta-uri"));
 		image.setName(response.getHeaderString("x-image-meta-name"));
 		image.setDiskFormat(response.getHeaderString("x-image-meta-disk_format"));
 		image.setContainerFormat(response.getHeaderString("x-image-meta-container_format"));
-		image.setSize(asInteger(response.getHeaderString("x-image-meta-size")));
+		image.setSize(asLong(response.getHeaderString("x-image-meta-size")));
 		image.setChecksum(response.getHeaderString("x-image-meta-checksum"));
 		image.setCreatedAt(asCalendar(response.getHeaderString("x-image-meta-create_at")));
 		image.setUpdatedAt(asCalendar(response.getHeaderString("x-image-meta-updated_at")));
@@ -50,15 +51,28 @@ public class DownloadImage implements GlanceCommand<ImageDownload> {
 	}
 	
 	private Calendar asCalendar(String calendarString) {
-		return null;
+		return Calendar.getInstance();
 	}
 	
 	private Integer asInteger(String integerString) {
-		return null;
+		if(integerString != null) {
+			return Integer.parseInt(integerString);
+		}
+		return 0;
 	}
 	
 	private Boolean asBoolean(String booleanString) {
-		return null;
+		if(booleanString != null) {
+			return Boolean.parseBoolean(booleanString);
+		}
+		return Boolean.FALSE;
+	}
+	
+	private Long asLong(String longString) {
+		if(longString != null) {
+			return Long.parseLong(longString);
+		}
+		return 0L;
 	}
 
 }
